@@ -1,16 +1,37 @@
 import { NextResponse } from 'next/server'
+import fs from 'fs'
+import path from 'path'
 
 export async function POST(req: Request) {
-  console.log('Received request ')
   try {
-    const body = await req.json()
-    const { bodyImages, itemImages, description } = body
+    await req.json() // keep same contract as real AI
 
-    const data = { ok: true }
+    // Path to fake image in /public
+    const imagePath = path.join(
+      process.cwd(),
+      'public',
+      'fake-ai-result',
+      // 'fake-result.png',
+      'strawberry.jpg',
+    )
 
-    return NextResponse.json(data, { status: 200 })
+    // Read file
+    const fileBuffer = fs.readFileSync(imagePath)
+
+    // Convert to base64
+    const base64 = fileBuffer.toString('base64')
+
+    // Add data URI prefix (IMPORTANT)
+    const base64Image = `data:image/png;base64,${base64}`
+
+    return NextResponse.json(
+      {
+        image: base64Image,
+      },
+      { status: 200 },
+    )
   } catch (error) {
-    console.error('[RECENT_TRANSACTIONS_ERROR]', error)
+    console.error('[AI_GENERATE_ERROR]', error)
     return new NextResponse('Internal Server Error', { status: 500 })
   }
 }
