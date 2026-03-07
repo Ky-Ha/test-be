@@ -38,10 +38,10 @@ export const generationResults = pgTable('generation_results', {
     .notNull()
     .references(() => users.id, { onDelete: 'cascade' }),
 
-  bodyImageUrl: text('body_image_url'),
-  itemImageUrl: text('item_image_url'),
+  bodyImageBase64: text('body_image_base64'),
+  itemImageBase64: text('item_image_base64'),
 
-  resultImageUrl: text('result_image_url').notNull(),
+  resultImagebase64: text('result_image_base64').notNull(),
   description: text('description'),
 
   // true if user's free generation
@@ -50,18 +50,16 @@ export const generationResults = pgTable('generation_results', {
   createdAt: timestamp('created_at').defaultNow().notNull(),
 })
 
-export const generationRequests = pgTable('generation_requests', {
+export const errorGenerationRequests = pgTable('errorGenerationRequests', {
   id: uuid('id').primaryKey().defaultRandom(),
 
   userId: text('user_id')
     .notNull()
     .references(() => users.id, { onDelete: 'cascade' }),
 
-  bodyImageUrl: text('body_image_url'),
-  itemImageUrl: text('item_image_url'),
+  bodyImageBase64: text('body_image_base64'),
+  itemImageBase64: text('item_image_base64'),
   description: text('description'),
-
-  status: varchar('status', { length: 50 }),
 
   error: text('error'),
 
