@@ -5,27 +5,27 @@ import path from 'path'
 import { NextResponse } from 'next/server'
 
 // Helper to save images locally
-async function debugSave(base64: string, name: string) {
-  const dir = path.join(process.cwd(), 'debug_uploads')
-  await fs.mkdir(dir, { recursive: true })
-  const data = base64.replace(/^data:image\/\w+;base64,/, '')
-  await fs.writeFile(path.join(dir, name), Buffer.from(data, 'base64'))
-}
+// async function debugSave(base64: string, name: string) {
+//   const dir = path.join(process.cwd(), 'debug_uploads')
+//   await fs.mkdir(dir, { recursive: true })
+//   const data = base64.replace(/^data:image\/\w+;base64,/, '')
+//   await fs.writeFile(path.join(dir, name), Buffer.from(data, 'base64'))
+// }
 
 export async function POST(req: Request) {
   try {
     const { bodyImages, itemImages, description } = await req.json()
-    const timestamp = Date.now()
+    // const timestamp = Date.now()
 
     // 1. Local Debug Saving (Inputs)
-    await Promise.all([
-      ...bodyImages.map((img: string, i: number) =>
-        debugSave(img, `in_body_${timestamp}_${i}.png`),
-      ),
-      ...itemImages.map((img: string, i: number) =>
-        debugSave(img, `in_item_${timestamp}_${i}.png`),
-      ),
-    ])
+    // await Promise.all([
+    //   ...bodyImages.map((img: string, i: number) =>
+    //     debugSave(img, `in_body_${timestamp}_${i}.png`),
+    //   ),
+    //   ...itemImages.map((img: string, i: number) =>
+    //     debugSave(img, `in_item_${timestamp}_${i}.png`),
+    //   ),
+    // ])
 
     // 2. Call Gemini via AI SDK
     const { files } = await generateText({
@@ -66,10 +66,10 @@ export async function POST(req: Request) {
     // AI SDK returns uint8Array in 'files'
     const outputBuffer = Buffer.from(generatedFile.uint8Array)
     const outputBase64 = outputBuffer.toString('base64')
-    await fs.writeFile(
-      path.join(process.cwd(), 'debug_uploads', `out_${timestamp}.png`),
-      outputBuffer,
-    )
+    // await fs.writeFile(
+    //   path.join(process.cwd(), 'debug_uploads', `out_${timestamp}.png`),
+    //   outputBuffer,
+    // )
 
     return NextResponse.json({
       image: `data:image/png;base64,${outputBase64}`,

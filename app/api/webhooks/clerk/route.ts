@@ -27,7 +27,7 @@ export async function POST(req: Request) {
   const WEBHOOK_SECRET = process.env.CLERK_WEBHOOK_SECRET
   if (!WEBHOOK_SECRET) {
     throw new Error(
-      'Please add WEBHOOK_SECRET from Clerk Dashboard to .env or .env.local'
+      'Please add WEBHOOK_SECRET from Clerk Dashboard to .env or .env.local',
     )
   }
 
@@ -72,7 +72,6 @@ export async function POST(req: Request) {
   const eventType = evt.type
 
   if (eventType === 'user.created') {
-    console.log('user created: ', JSON.parse(body).data)
     try {
       const onboardingUser: ONBOARDING_USER_META = {
         email: JSON.parse(body).data.email_addresses[0].email_address,
@@ -93,7 +92,6 @@ export async function POST(req: Request) {
   }
   if (eventType === 'user.updated') {
     try {
-      console.log('user updated: ', JSON.parse(body).data)
       const updateUser: UPDATE_USER_META = {
         email:
           JSON.parse(body).data.email_addresses[0].email_address ?? undefined,
@@ -124,7 +122,6 @@ export async function POST(req: Request) {
   if (eventType === 'user.deleted') {
     // IMPORTANCE: DELETE A USER WILL DELETE ALL RESOURCES THE USER MANAGE (WORKSPACES)
     try {
-      console.log('user deleted: ', JSON.parse(body).data)
       // get clerkUserId
       const existingUser = await db
         .select()
